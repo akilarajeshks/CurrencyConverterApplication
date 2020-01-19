@@ -61,8 +61,9 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
                 if (_rates.value != null && _rates.value is CurrencyViewData.SuccessCurrencyViewData) {
                     base = (_rates.value as CurrencyViewData.SuccessCurrencyViewData).currencyList.first().name
                     value = (_rates.value as CurrencyViewData.SuccessCurrencyViewData).currencyList.first().value
+                }else{
+                    _rates.postValue(CurrencyViewData.LoadingCurrencyViewData)
                 }
-                _rates.postValue(CurrencyViewData.LoadingCurrencyViewData)
                 val networkResponse: NetworkResult<CurrencyData> = if (base != null) {
                     repository.getCurrencyData(base)
                 } else {
@@ -84,6 +85,8 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
                             if (base==currencyList.first().name && value!=currencyList.first().value) {
                                 val updatedList = mutableListOf<Currency>().apply { addAll(currencyList.map { Currency(it.name, it.value * value) }) }
                                 _rates.postValue(CurrencyViewData.SuccessCurrencyViewData(updatedList))
+                            }else{
+                                _rates.postValue(CurrencyViewData.SuccessCurrencyViewData(currencyList))
                             }
                         } else {
                             _rates.postValue(CurrencyViewData.SuccessCurrencyViewData(currencyList))
@@ -93,7 +96,7 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
                         _rates.postValue(CurrencyViewData.ErrorCurrencyViewData(reason = networkResponse.reason))
                     }
                 }
-                delay(5000)
+                delay(1000)
             }
         }
     }

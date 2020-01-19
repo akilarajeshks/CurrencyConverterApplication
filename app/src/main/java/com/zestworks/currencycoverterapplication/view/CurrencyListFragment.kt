@@ -27,6 +27,12 @@ class CurrencyListFragment : Fragment() {
 
         currencyViewModel.rates.observe(this, Observer {
             when (it) {
+                CurrencyViewData.LoadingCurrencyViewData -> {
+                    loading_progress_bar.visibility = View.VISIBLE
+                    currency_list_recycler.visibility = View.GONE
+                    error_text_view.visibility = View.INVISIBLE
+                }
+
                 is CurrencyViewData.SuccessCurrencyViewData -> {
 
                     if (currency_list_recycler.adapter == null) {
@@ -42,10 +48,12 @@ class CurrencyListFragment : Fragment() {
                         (currency_list_recycler.adapter!! as CurrencyListAdapter).setList(it.currencyList)
                     }
 
+                    loading_progress_bar.visibility = View.INVISIBLE
                     error_text_view.visibility = View.INVISIBLE
                     currency_list_recycler.visibility = View.VISIBLE
                 }
                 is CurrencyViewData.ErrorCurrencyViewData -> {
+                    loading_progress_bar.visibility = View.INVISIBLE
                     currency_list_recycler.visibility = View.GONE
                     error_text_view.visibility = View.VISIBLE
                 }
