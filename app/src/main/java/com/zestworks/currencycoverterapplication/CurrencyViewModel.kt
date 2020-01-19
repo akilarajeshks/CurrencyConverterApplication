@@ -64,6 +64,7 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
                     base = (_rates.value as CurrencyViewData.SuccessCurrencyViewData).currencyList.first().name
                     value = (_rates.value as CurrencyViewData.SuccessCurrencyViewData).currencyList.first().value
                 }
+                _rates.postValue(CurrencyViewData.LoadingCurrencyViewData)
                 val networkResponse: NetworkResult<CurrencyData> = if (base != null) {
                     repository.getCurrencyData(base)
                 } else {
