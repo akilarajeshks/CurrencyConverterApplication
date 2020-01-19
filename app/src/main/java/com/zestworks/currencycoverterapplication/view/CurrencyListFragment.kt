@@ -41,7 +41,8 @@ class CurrencyListFragment : Fragment() {
                             layoutManager = LinearLayoutManager(this.context)
                         }
                     }else{
-                        currency_list_recycler.adapter!!.notifyDataSetChanged()
+                        (currency_list_recycler.adapter!! as CurrencyListAdapter).setList(it.currencyList)
+                        //currency_list_recycler.adapter!!.notifyDataSetChanged()
                     }
                 }
                 is CurrencyViewData.ErrorCurrencyViewData -> {

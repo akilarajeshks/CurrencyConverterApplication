@@ -6,7 +6,6 @@ import com.zestworks.currencycoverterapplication.network.NetworkResult
 import com.zestworks.currencycoverterapplication.repository.Repository
 import com.zestworks.currencycoverterapplication.view.CurrencyViewData
 import com.zestworks.currencycoverterapplication.view.UIEvent
-import io.kotlintest.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verifyOrder
@@ -89,11 +88,27 @@ class CurrencyViewModelUnitTest {
         currencyViewModel.onUIStarted()
         currencyViewModel.onEvent(UIEvent.StartEditUIEvent(baseCurrency))
 
-        val currentRateList = currencyViewModel.rates.value
-        (currentRateList is CurrencyViewData.SuccessCurrencyViewData) shouldBe true
-        (currentRateList as CurrencyViewData.SuccessCurrencyViewData).currencyList.first().name shouldBe baseCurrency
+        verifyOrder {
+            testObserver.onChanged(CurrencyViewData.SuccessCurrencyViewData(dummyListAfterClickingINR))
+        }
     }
 
+    @Test
+    fun `Value update Test`(){
+        every {
+            runBlocking {
+                repository.getCurrencyData()
+            }
+        }.returns(NetworkResult.Success(dummySuccessData))
+
+        currencyViewModel.onUIStarted()
+        currencyViewModel.onEvent(UIEvent.TextChangeUIEvent(2.0))
+
+        verifyOrder {
+            testObserver.onChanged(CurrencyViewData.SuccessCurrencyViewData(dummyListOfDataAfterChangeBy2))
+        }
+
+    }
 
 
     @ExperimentalCoroutinesApi

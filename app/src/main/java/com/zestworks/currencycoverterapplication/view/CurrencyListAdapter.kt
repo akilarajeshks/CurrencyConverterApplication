@@ -1,7 +1,5 @@
 package com.zestworks.currencycoverterapplication.view
 
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -10,7 +8,9 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.jakewharton.rxbinding3.widget.textChanges
 import com.zestworks.currencycoverterapplication.R
+import java.util.concurrent.TimeUnit
 
 class CurrencyListAdapter(var currencyList: List<Currency>, private val adapterCallback: AdapterCallback) : RecyclerView.Adapter<CurrencyListAdapter.CurrencyItemHolder>() {
 
@@ -22,7 +22,12 @@ class CurrencyListAdapter(var currencyList: List<Currency>, private val adapterC
     override fun onBindViewHolder(holder: CurrencyItemHolder, position: Int) {
         val currency = currencyList[position]
         holder.currencyName.text = currency.name
-        holder.currencyValue.setText(currency.value.toString())
+        if (holder.currencyValue.text.toString()!=currency.value.toString()){
+            //holder.currencyValue.editableText.replace(0,holder.currencyValue.text.toString().length,currency.value.toString())
+            holder.currencyValue.setText(
+                    currency.value.toString()
+            )
+        }
     }
 
     inner class CurrencyItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -30,39 +35,44 @@ class CurrencyListAdapter(var currencyList: List<Currency>, private val adapterC
         val currencyValue: EditText = itemView.findViewById(R.id.currency_value_edittext)
 
         init {
+
             currencyValue.setOnTouchListener { v, event ->
                 if (event.action == MotionEvent.ACTION_UP) {
-                    onFocusChanged(adapterPosition)
+                    adapterCallback.onUIEvent(UIEvent.StartEditUIEvent(this@CurrencyListAdapter.currencyList[adapterPosition].name))
                     true
                 }
                 false
             }
-            currencyValue.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(s: Editable?) {
 
+            currencyValue.textChanges().skipInitialValue().debounce(500, TimeUnit.MILLISECONDS).subscribe {
+                if (currencyValue.isFocused) {
+                    adapterCallback.onUIEvent(UIEvent.TextChangeUIEvent(it.toString().toDouble()))
                 }
-
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-                }
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                }
-
-            })
+            }
         }
+
+
+
+
     }
 
-    fun onFocusChanged(adapterPosition: Int) {
-        adapterCallback.onUIEvent(UIEvent.StartEditUIEvent(currencyList[adapterPosition].name))
+
+    fun setList(currencyList: List<Currency>) {
+        val diffCallback = DiffUtil(this.currencyList, currencyList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        this.currencyList = currencyList
+
+        diffResult.dispatchUpdatesTo(this)
     }
 }
 
-class DiffUtil(private val oldList: List<String>, private val newList: List<String>) :
+class DiffUtil(private val oldList: List<Currency>, private val newList: List<Currency>) :
         DiffUtil.Callback() {
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList.containsAll(newList)
+        val oldCurrency = oldList[oldItemPosition]
+        val newCurrency = newList[newItemPosition]
+
+        return oldCurrency.name == newCurrency.name
     }
 
     override fun getOldListSize(): Int {
@@ -74,9 +84,9 @@ class DiffUtil(private val oldList: List<String>, private val newList: List<Stri
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val name = oldList[oldItemPosition]
-        val name1 = newList[newItemPosition]
+        val oldCurrency = oldList[oldItemPosition]
+        val newCurrency = newList[newItemPosition]
 
-        return name == name1
+        return oldCurrency == newCurrency
     }
 }
