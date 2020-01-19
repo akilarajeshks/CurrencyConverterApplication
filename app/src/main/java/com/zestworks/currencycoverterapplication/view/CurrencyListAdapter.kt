@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.zestworks.currencycoverterapplication.R
+import java.math.RoundingMode
+import java.text.DecimalFormat
 import java.util.concurrent.TimeUnit
 
 class CurrencyListAdapter(var currencyList: List<Currency>, private val adapterCallback: AdapterCallback) : RecyclerView.Adapter<CurrencyListAdapter.CurrencyItemHolder>() {
@@ -22,9 +24,13 @@ class CurrencyListAdapter(var currencyList: List<Currency>, private val adapterC
     override fun onBindViewHolder(holder: CurrencyItemHolder, position: Int) {
         val currency = currencyList[position]
         holder.currencyName.text = currency.name
-        if (holder.currencyValue.text.toString() != currency.value.toString()) {
-            holder.currencyValue.setText(currency.value.toString())
-        }
+        holder.currencyValue.setText(currency.value.roundOffDecimal().toString())
+    }
+
+    private fun Double.roundOffDecimal(): Double? {
+        val df = DecimalFormat("#.##")
+        df.roundingMode = RoundingMode.CEILING
+        return df.format(this).toDouble()
     }
 
     inner class CurrencyItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

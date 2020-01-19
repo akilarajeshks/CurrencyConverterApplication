@@ -53,8 +53,6 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
     }
 
     fun onUIStarted() {
-//        _rates.postValue(CurrencyViewData.LoadingCurrencyViewData)
-
 
         viewModelScope.launch {
             while (true) {
