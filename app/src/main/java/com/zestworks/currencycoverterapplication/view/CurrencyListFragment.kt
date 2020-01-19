@@ -1,22 +1,20 @@
 package com.zestworks.currencycoverterapplication.view
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zestworks.currencycoverterapplication.CurrencyViewModel
 import com.zestworks.currencycoverterapplication.R
 import kotlinx.android.synthetic.main.fragment_currency_list.*
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CurrencyListFragment : Fragment() {
 
-    private val currencyViewModel : CurrencyViewModel by inject()
+    private val currencyViewModel: CurrencyViewModel by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -28,27 +26,35 @@ class CurrencyListFragment : Fragment() {
         super.onStart()
 
         currencyViewModel.rates.observe(this, Observer {
-            when(it){
+            when (it) {
                 CurrencyViewData.LoadingCurrencyViewData -> {
-                    //show loader
+                    loading_progress_bar.visibility = View.VISIBLE
+                    error_text_view.visibility = View.INVISIBLE
+                    currency_list_recycler.visibility = View.INVISIBLE
                 }
                 is CurrencyViewData.SuccessCurrencyViewData -> {
-                    if (currency_list_recycler.adapter == null){
+
+                    if (currency_list_recycler.adapter == null) {
                         currency_list_recycler.apply {
-                            adapter = CurrencyListAdapter(it.currencyList, object : AdapterCallback{
+                            adapter = CurrencyListAdapter(it.currencyList, object : AdapterCallback {
                                 override fun onUIEvent(uiEvent: UIEvent) {
                                     currencyViewModel.onEvent(uiEvent)
                                 }
                             })
                             layoutManager = LinearLayoutManager(this.context)
                         }
-                    }else{
+                    } else {
                         (currency_list_recycler.adapter!! as CurrencyListAdapter).setList(it.currencyList)
-                        //currency_list_recycler.adapter!!.notifyDataSetChanged()
                     }
+
+                    loading_progress_bar.visibility = View.INVISIBLE
+                    error_text_view.visibility = View.INVISIBLE
+                    currency_list_recycler.visibility = View.VISIBLE
                 }
                 is CurrencyViewData.ErrorCurrencyViewData -> {
-                    //show error
+                    loading_progress_bar.visibility = View.INVISIBLE
+                    currency_list_recycler.visibility = View.GONE
+                    error_text_view.visibility = View.VISIBLE
                 }
             }
         })
@@ -57,6 +63,6 @@ class CurrencyListFragment : Fragment() {
     }
 }
 
-interface AdapterCallback{
-    fun onUIEvent(uiEvent : UIEvent)
+interface AdapterCallback {
+    fun onUIEvent(uiEvent: UIEvent)
 }
