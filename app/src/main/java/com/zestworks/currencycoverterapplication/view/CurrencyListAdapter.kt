@@ -22,11 +22,8 @@ class CurrencyListAdapter(var currencyList: List<Currency>, private val adapterC
     override fun onBindViewHolder(holder: CurrencyItemHolder, position: Int) {
         val currency = currencyList[position]
         holder.currencyName.text = currency.name
-        if (holder.currencyValue.text.toString()!=currency.value.toString()){
-            //holder.currencyValue.editableText.replace(0,holder.currencyValue.text.toString().length,currency.value.toString())
-            holder.currencyValue.setText(
-                    currency.value.toString()
-            )
+        if (holder.currencyValue.text.toString() != currency.value.toString()) {
+            holder.currencyValue.setText(currency.value.toString())
         }
     }
 
@@ -44,16 +41,12 @@ class CurrencyListAdapter(var currencyList: List<Currency>, private val adapterC
                 false
             }
 
-            currencyValue.textChanges().skipInitialValue().debounce(500, TimeUnit.MILLISECONDS).subscribe {
+            currencyValue.textChanges().skipInitialValue().debounce(900, TimeUnit.MILLISECONDS).subscribe {
                 if (currencyValue.isFocused) {
                     adapterCallback.onUIEvent(UIEvent.TextChangeUIEvent(it.toString().toDouble()))
                 }
             }
         }
-
-
-
-
     }
 
 

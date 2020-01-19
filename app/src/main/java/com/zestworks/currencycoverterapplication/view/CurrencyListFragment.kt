@@ -10,11 +10,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.zestworks.currencycoverterapplication.CurrencyViewModel
 import com.zestworks.currencycoverterapplication.R
 import kotlinx.android.synthetic.main.fragment_currency_list.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CurrencyListFragment : Fragment() {
 
-    private val currencyViewModel : CurrencyViewModel by sharedViewModel()
+    private val currencyViewModel : CurrencyViewModel by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

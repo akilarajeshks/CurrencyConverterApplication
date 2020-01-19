@@ -54,7 +54,6 @@ class CurrencyViewModelUnitTest {
         currencyViewModel.onUIStarted()
 
         verifyOrder {
-            testObserver.onChanged(CurrencyViewData.LoadingCurrencyViewData)
             testObserver.onChanged(CurrencyViewData.SuccessCurrencyViewData(dummyListOfCurrencyData))
         }
 
@@ -71,7 +70,6 @@ class CurrencyViewModelUnitTest {
         currencyViewModel.onUIStarted()
 
         verifyOrder {
-            testObserver.onChanged(CurrencyViewData.LoadingCurrencyViewData)
             testObserver.onChanged(CurrencyViewData.ErrorCurrencyViewData(errorMessage))
         }
     }

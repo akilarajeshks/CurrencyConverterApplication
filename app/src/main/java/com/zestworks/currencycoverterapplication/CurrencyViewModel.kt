@@ -10,6 +10,7 @@ import com.zestworks.currencycoverterapplication.repository.Repository
 import com.zestworks.currencycoverterapplication.view.Currency
 import com.zestworks.currencycoverterapplication.view.CurrencyViewData
 import com.zestworks.currencycoverterapplication.view.UIEvent
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class CurrencyViewModel(private val repository: Repository) : ViewModel() {
@@ -52,36 +53,49 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
     }
 
     fun onUIStarted() {
-        _rates.postValue(CurrencyViewData.LoadingCurrencyViewData)
+//        _rates.postValue(CurrencyViewData.LoadingCurrencyViewData)
+
 
         viewModelScope.launch {
-            //            while (true) {
-            val networkResponse: NetworkResult<CurrencyData> = if (_rates.value != null && _rates.value is CurrencyViewData.SuccessCurrencyViewData) {
-                val base = (_rates.value as CurrencyViewData.SuccessCurrencyViewData).currencyList.first().name
-                repository.getCurrencyData(base)
-            } else {
-                repository.getCurrencyData()
-            }
-            when (networkResponse) {
-                is NetworkResult.Success -> {
-                    val currencyList = mutableListOf<Currency>()
+            while (true) {
+                var base: String? = null
+                var value: Double? = null
+                if (_rates.value != null && _rates.value is CurrencyViewData.SuccessCurrencyViewData) {
+                    base = (_rates.value as CurrencyViewData.SuccessCurrencyViewData).currencyList.first().name
+                    value = (_rates.value as CurrencyViewData.SuccessCurrencyViewData).currencyList.first().value
+                }
+                val networkResponse: NetworkResult<CurrencyData> = if (base != null) {
+                    repository.getCurrencyData(base)
+                } else {
+                    repository.getCurrencyData()
+                }
+                when (networkResponse) {
+                    is NetworkResult.Success -> {
+                        val currencyList = mutableListOf<Currency>()
 
-                    val baseCurrency = networkResponse.data.base
-                    currencyList.add(Currency(name = baseCurrency, value = 1.0))
+                        val baseCurrency = networkResponse.data.base
+                        currencyList.add(Currency(name = baseCurrency, value = 1.0))
 
-                    val rates = networkResponse.data.rates
-                    rates.keys.forEach {
-                        currencyList.add(Currency(name = it, value = rates[it]!!))
+                        val rates = networkResponse.data.rates
+                        rates.keys.forEach {
+                            currencyList.add(Currency(name = it, value = rates[it]!!))
+                        }
+
+                        if (base != null && value != null) {
+                            if (base==currencyList.first().name && value!=currencyList.first().value) {
+                                val updatedList = mutableListOf<Currency>().apply { addAll(currencyList.map { Currency(it.name, it.value * value) }) }
+                                _rates.postValue(CurrencyViewData.SuccessCurrencyViewData(updatedList))
+                            }
+                        } else {
+                            _rates.postValue(CurrencyViewData.SuccessCurrencyViewData(currencyList))
+                        }
                     }
-
-                    _rates.postValue(CurrencyViewData.SuccessCurrencyViewData(currencyList))
+                    is NetworkResult.Error -> {
+                        _rates.postValue(CurrencyViewData.ErrorCurrencyViewData(reason = networkResponse.reason))
+                    }
                 }
-                is NetworkResult.Error -> {
-                    _rates.postValue(CurrencyViewData.ErrorCurrencyViewData(reason = networkResponse.reason))
-                }
+                delay(5000)
             }
-//                delay(5000)
-//            }
         }
     }
 }
