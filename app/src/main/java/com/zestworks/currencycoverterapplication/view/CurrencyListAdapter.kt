@@ -47,7 +47,7 @@ class CurrencyListAdapter(var currencyList: List<Currency>, private val adapterC
                 false
             }
 
-            currencyValue.textChanges().skipInitialValue().debounce(900, TimeUnit.MILLISECONDS).subscribe {
+            currencyValue.textChanges().skipInitialValue().subscribe {
                 if (currencyValue.isFocused) {
                     adapterCallback.onUIEvent(UIEvent.TextChangeUIEvent(it.toString().toDouble()))
                 }

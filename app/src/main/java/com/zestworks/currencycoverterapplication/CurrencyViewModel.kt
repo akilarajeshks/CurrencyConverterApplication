@@ -10,6 +10,7 @@ import com.zestworks.currencycoverterapplication.repository.Repository
 import com.zestworks.currencycoverterapplication.view.Currency
 import com.zestworks.currencycoverterapplication.view.CurrencyViewData
 import com.zestworks.currencycoverterapplication.view.UIEvent
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -18,22 +19,28 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
     private val _rates = MutableLiveData<CurrencyViewData>()
     val rates: LiveData<CurrencyViewData> = _rates
 
+    private lateinit var launch: Job
+
     fun onEvent(event: UIEvent) {
         when (event) {
             is UIEvent.StartEditUIEvent -> {
+                    launch.cancel()
+
                 val baseCurrency = event.currencyName
                 val currencyList = (_rates.value as CurrencyViewData.SuccessCurrencyViewData).currencyList.toMutableList()
-                if (currencyList.first().name == baseCurrency) {
-                    return
+                if (currencyList.first().name != baseCurrency) {
+                    val currency = currencyList.find { it.name == baseCurrency }
+                    if (currency != null) {
+                        currencyList.remove(currency)
+                        currencyList.add(0, currency)
+                        _rates.postValue(CurrencyViewData.SuccessCurrencyViewData(currencyList))
+                    }
                 }
-                val currency = currencyList.find { it.name == baseCurrency }
-                if (currency != null) {
-                    currencyList.remove(currency)
-                    currencyList.add(0, currency)
-                    _rates.value = (CurrencyViewData.SuccessCurrencyViewData(currencyList))
-                }
+
+                onUIStarted()
             }
             is UIEvent.TextChangeUIEvent -> {
+                    launch.cancel()
                 val editedCurrencyValue = event.value
                 val currencyList = (_rates.value as CurrencyViewData.SuccessCurrencyViewData).currencyList
                 val currentCurrencyValue = currencyList.first().value
@@ -48,55 +55,64 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
                     }
                 }
                 _rates.postValue(CurrencyViewData.SuccessCurrencyViewData(updatedCurrencyList))
+                onUIStarted()
             }
         }
     }
 
     fun onUIStarted() {
+        if (!(::launch.isInitialized) || !launch.isActive) {
+            launch = viewModelScope.launch {
+                while (true) {
+                    var base: String? = null
+                    var value: Double? = null
+                    if (_rates.value != null && _rates.value is CurrencyViewData.SuccessCurrencyViewData) {
+                        base = (_rates.value as CurrencyViewData.SuccessCurrencyViewData).currencyList.first().name
+                        value = (_rates.value as CurrencyViewData.SuccessCurrencyViewData).currencyList.first().value
+                    } else {
+                        _rates.postValue(CurrencyViewData.LoadingCurrencyViewData)
+                    }
+                    val networkResponse: NetworkResult<CurrencyData> = if (base != null) {
+                        repository.getCurrencyData(base)
+                    } else {
+                        repository.getCurrencyData("EUR")
+                    }
+                    when (networkResponse) {
+                        is NetworkResult.Success -> {
+                            val currencyList = mutableListOf<Currency>()
 
-        viewModelScope.launch {
-            while (true) {
-                var base: String? = null
-                var value: Double? = null
-                if (_rates.value != null && _rates.value is CurrencyViewData.SuccessCurrencyViewData) {
-                    base = (_rates.value as CurrencyViewData.SuccessCurrencyViewData).currencyList.first().name
-                    value = (_rates.value as CurrencyViewData.SuccessCurrencyViewData).currencyList.first().value
-                }else{
-                    _rates.postValue(CurrencyViewData.LoadingCurrencyViewData)
-                }
-                val networkResponse: NetworkResult<CurrencyData> = if (base != null) {
-                    repository.getCurrencyData(base)
-                } else {
-                    repository.getCurrencyData()
-                }
-                when (networkResponse) {
-                    is NetworkResult.Success -> {
-                        val currencyList = mutableListOf<Currency>()
+                            val baseCurrency = networkResponse.data.base
+                            currencyList.add(Currency(name = baseCurrency, value = 1.0))
 
-                        val baseCurrency = networkResponse.data.base
-                        currencyList.add(Currency(name = baseCurrency, value = 1.0))
+                            val rates = networkResponse.data.rates
+                            if (_rates.value != null && _rates.value is CurrencyViewData.SuccessCurrencyViewData) {
+                                val prevCurrencyList = (_rates.value as CurrencyViewData.SuccessCurrencyViewData).currencyList
+                                currencyList.addAll(
+                                        prevCurrencyList.filter { it.name != baseCurrency }.map { Currency(it.name, rates[it.name]!!) }
+                                )
+                            } else {
+                                rates.keys.forEach {
+                                    currencyList.add(Currency(name = it, value = rates[it]!!))
+                                }
+                            }
 
-                        val rates = networkResponse.data.rates
-                        rates.keys.forEach {
-                            currencyList.add(Currency(name = it, value = rates[it]!!))
-                        }
-
-                        if (base != null && value != null) {
-                            if (base==currencyList.first().name && value!=currencyList.first().value) {
-                                val updatedList = mutableListOf<Currency>().apply { addAll(currencyList.map { Currency(it.name, it.value * value) }) }
-                                _rates.postValue(CurrencyViewData.SuccessCurrencyViewData(updatedList))
-                            }else{
+                            if (base != null && value != null) {
+                                if (base == currencyList.first().name && value != currencyList.first().value) {
+                                    val updatedList = mutableListOf<Currency>().apply { addAll(currencyList.map { Currency(it.name, it.value * value) }) }
+                                    _rates.postValue(CurrencyViewData.SuccessCurrencyViewData(updatedList))
+                                } else {
+                                    _rates.postValue(CurrencyViewData.SuccessCurrencyViewData(currencyList))
+                                }
+                            } else {
                                 _rates.postValue(CurrencyViewData.SuccessCurrencyViewData(currencyList))
                             }
-                        } else {
-                            _rates.postValue(CurrencyViewData.SuccessCurrencyViewData(currencyList))
+                        }
+                        is NetworkResult.Error -> {
+                            _rates.postValue(CurrencyViewData.ErrorCurrencyViewData(reason = networkResponse.reason))
                         }
                     }
-                    is NetworkResult.Error -> {
-                        _rates.postValue(CurrencyViewData.ErrorCurrencyViewData(reason = networkResponse.reason))
-                    }
+                    delay(1000)
                 }
-                delay(1000)
             }
         }
     }

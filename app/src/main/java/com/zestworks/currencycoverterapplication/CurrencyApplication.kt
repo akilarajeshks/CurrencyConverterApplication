@@ -18,7 +18,7 @@ class CurrencyApplication:Application() {
 
         val module = module {
             single { provideNetworkService() }
-            single { CurrencyViewModel(get()) }
+            viewModel { CurrencyViewModel(get()) }
 
             single<Repository> { CurrencyRepositoryImpl(get()) }
         }

@@ -47,7 +47,7 @@ class CurrencyViewModelUnitTest {
     fun `Test Success`() {
         every {
             runBlocking {
-                repository.getCurrencyData()
+                repository.getCurrencyData(any())
             }
         }.returns(NetworkResult.Success(dummySuccessData))
 
@@ -64,7 +64,7 @@ class CurrencyViewModelUnitTest {
     fun `Test Error`() {
         every {
             runBlocking {
-                repository.getCurrencyData()
+                repository.getCurrencyData(any())
             }
         }.returns(NetworkResult.Error(errorMessage))
 
@@ -81,7 +81,7 @@ class CurrencyViewModelUnitTest {
         val baseCurrency = "INR"
         every {
             runBlocking {
-                repository.getCurrencyData()
+                repository.getCurrencyData(any())
             }
         }.returns(NetworkResult.Success(dummySuccessData))
 
@@ -97,7 +97,7 @@ class CurrencyViewModelUnitTest {
     fun `Value update Test`(){
         every {
             runBlocking {
-                repository.getCurrencyData()
+                repository.getCurrencyData(any())
             }
         }.returns(NetworkResult.Success(dummySuccessData))
 
