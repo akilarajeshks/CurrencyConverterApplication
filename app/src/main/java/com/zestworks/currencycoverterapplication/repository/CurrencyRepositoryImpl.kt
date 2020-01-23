@@ -1,8 +1,7 @@
 package com.zestworks.currencycoverterapplication.repository
 
-import com.zestworks.currencycoverterapplication.network.NetworkResult
-import com.zestworks.currencycoverterapplication.network.NetworkService
-import kotlinx.coroutines.delay
+import com.zestworks.currencycoverterapplication.repository.network.NetworkResult
+import com.zestworks.currencycoverterapplication.repository.network.NetworkService
 import java.net.UnknownHostException
 
 class CurrencyRepositoryImpl(private val networkService: NetworkService) : Repository {

@@ -1,4 +1,4 @@
-package com.zestworks.currencycoverterapplication.view
+package com.zestworks.currencycoverterapplication.ui
 
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.zestworks.currencycoverterapplication.R
+import com.zestworks.currencycoverterapplication.viewmodel.Currency
+import com.zestworks.currencycoverterapplication.viewmodel.UIEvent
 
 class CurrencyListAdapter(var currencyList: List<Currency>, private val adapterCallback: AdapterCallback) : RecyclerView.Adapter<CurrencyListAdapter.CurrencyItemHolder>() {
 

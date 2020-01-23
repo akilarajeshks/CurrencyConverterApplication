@@ -1,9 +1,10 @@
 package com.zestworks.currencycoverterapplication
 
 import android.app.Application
-import com.zestworks.currencycoverterapplication.network.NetworkService
+import com.zestworks.currencycoverterapplication.repository.network.NetworkService
 import com.zestworks.currencycoverterapplication.repository.CurrencyRepositoryImpl
 import com.zestworks.currencycoverterapplication.repository.Repository
+import com.zestworks.currencycoverterapplication.viewmodel.CurrencyViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin

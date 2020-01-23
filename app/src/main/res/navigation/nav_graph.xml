@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/currencyListFragment"
-        android:name="com.zestworks.currencycoverterapplication.view.CurrencyListFragment"
+        android:name="com.zestworks.currencycoverterapplication.ui.CurrencyListFragment"
         android:label="fragment_currency_list"
         tools:layout="@layout/fragment_currency_list" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.zestworks.currencycoverterapplication.view
+package com.zestworks.currencycoverterapplication.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,10 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.zestworks.currencycoverterapplication.CurrencyViewModel
+import com.zestworks.currencycoverterapplication.viewmodel.CurrencyViewModel
 import com.zestworks.currencycoverterapplication.R
+import com.zestworks.currencycoverterapplication.viewmodel.CurrencyUiModel
+import com.zestworks.currencycoverterapplication.viewmodel.UIEvent
 import kotlinx.android.synthetic.main.fragment_currency_list.*
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CurrencyListFragment : Fragment() {
@@ -28,13 +29,13 @@ class CurrencyListFragment : Fragment() {
 
         currencyViewModel.rates.observe(this, Observer {
             when (it) {
-                CurrencyViewData.LoadingCurrencyViewData -> {
+                CurrencyUiModel.LoadingCurrencyUiModel -> {
                     loading_progress_bar.visibility = View.VISIBLE
                     currency_list_recycler.visibility = View.GONE
                     error_text_view.visibility = View.INVISIBLE
                 }
 
-                is CurrencyViewData.SuccessCurrencyViewData -> {
+                is CurrencyUiModel.SuccessCurrencyUiModel -> {
 
                     if (currency_list_recycler.adapter == null) {
                         currency_list_recycler.apply {
@@ -53,7 +54,7 @@ class CurrencyListFragment : Fragment() {
                     error_text_view.visibility = View.INVISIBLE
                     currency_list_recycler.visibility = View.VISIBLE
                 }
-                is CurrencyViewData.ErrorCurrencyViewData -> {
+                is CurrencyUiModel.ErrorCurrencyUiModel -> {
                     loading_progress_bar.visibility = View.INVISIBLE
                     currency_list_recycler.visibility = View.GONE
                     error_text_view.visibility = View.VISIBLE

@@ -1,19 +1,19 @@
-package com.zestworks.currencycoverterapplication
+package com.zestworks.currencycoverterapplication.dummydata
 
 import com.google.gson.Gson
 import com.zestworks.currencycoverterapplication.repository.CurrencyData
-import com.zestworks.currencycoverterapplication.view.Currency
+import com.zestworks.currencycoverterapplication.viewmodel.Currency
 import java.io.File
 
 
 val dummySuccessDataEURBase: CurrencyData = Gson()
-        .fromJson(File("src/test/java/com/zestworks/currencycoverterapplication/dummydata.json")
+        .fromJson(File("src/test/java/com/zestworks/currencycoverterapplication/dummydata/dummydataEUR.json")
                 .bufferedReader()
                 .use { it.readText() }
                 , CurrencyData::class.java)
 
 val dummySuccessDataINRBase: CurrencyData = Gson()
-        .fromJson(File("src/test/java/com/zestworks/currencycoverterapplication/dummydataINR.json")
+        .fromJson(File("src/test/java/com/zestworks/currencycoverterapplication/dummydata/dummydataINR.json")
                 .bufferedReader()
                 .use { it.readText() }
                 , CurrencyData::class.java)

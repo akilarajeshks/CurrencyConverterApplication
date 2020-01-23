@@ -1,4 +1,4 @@
-package com.zestworks.currencycoverterapplication.network
+package com.zestworks.currencycoverterapplication.repository.network
 
 import com.zestworks.currencycoverterapplication.repository.CurrencyData
 import retrofit2.Response

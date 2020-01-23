@@ -2,11 +2,13 @@ package com.zestworks.currencycoverterapplication
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.zestworks.currencycoverterapplication.network.NetworkResult
+import com.zestworks.currencycoverterapplication.dummydata.*
+import com.zestworks.currencycoverterapplication.repository.network.NetworkResult
 import com.zestworks.currencycoverterapplication.repository.Repository
-import com.zestworks.currencycoverterapplication.view.Currency
-import com.zestworks.currencycoverterapplication.view.CurrencyViewData
-import com.zestworks.currencycoverterapplication.view.UIEvent
+import com.zestworks.currencycoverterapplication.viewmodel.Currency
+import com.zestworks.currencycoverterapplication.viewmodel.CurrencyUiModel
+import com.zestworks.currencycoverterapplication.viewmodel.UIEvent
+import com.zestworks.currencycoverterapplication.viewmodel.CurrencyViewModel
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verifyOrder
@@ -22,7 +24,7 @@ import org.junit.Rule
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
-class CurrencyViewModelUnitTest {
+class CurrencyViewModelTest {
 
     @Rule
     @JvmField
@@ -30,7 +32,7 @@ class CurrencyViewModelUnitTest {
 
     private val repository = mockk<Repository>()
     private lateinit var currencyViewModel: CurrencyViewModel
-    private val testObserver: Observer<CurrencyViewData> = mockk()
+    private val testObserver: Observer<CurrencyUiModel> = mockk()
     @ExperimentalCoroutinesApi
     private val testCoroutineDispatcher = TestCoroutineDispatcher()
 
@@ -59,8 +61,8 @@ class CurrencyViewModelUnitTest {
         currencyViewModel.onUIStarted()
 
         verifyOrder {
-            testObserver.onChanged(CurrencyViewData.LoadingCurrencyViewData)
-            testObserver.onChanged(CurrencyViewData.SuccessCurrencyViewData(dummyListOfCurrencyData))
+            testObserver.onChanged(CurrencyUiModel.LoadingCurrencyUiModel)
+            testObserver.onChanged(CurrencyUiModel.SuccessCurrencyUiModel(dummyListOfCurrencyData))
         }
 
     }
@@ -76,8 +78,8 @@ class CurrencyViewModelUnitTest {
         currencyViewModel.onUIStarted()
 
         verifyOrder {
-            testObserver.onChanged(CurrencyViewData.LoadingCurrencyViewData)
-            testObserver.onChanged(CurrencyViewData.ErrorCurrencyViewData(errorMessage))
+            testObserver.onChanged(CurrencyUiModel.LoadingCurrencyUiModel)
+            testObserver.onChanged(CurrencyUiModel.ErrorCurrencyUiModel(errorMessage))
         }
     }
 
@@ -94,7 +96,7 @@ class CurrencyViewModelUnitTest {
         currencyViewModel.onEvent(UIEvent.StartEditUIEvent(baseCurrency))
 
         verifyOrder {
-            testObserver.onChanged(CurrencyViewData.SuccessCurrencyViewData(dummyListAfterClickingINR))
+            testObserver.onChanged(CurrencyUiModel.SuccessCurrencyUiModel(dummyListAfterClickingINR))
         }
     }
 
@@ -110,7 +112,7 @@ class CurrencyViewModelUnitTest {
         currencyViewModel.onEvent(UIEvent.TextChangeUIEvent(2.0))
 
         verifyOrder {
-            testObserver.onChanged(CurrencyViewData.SuccessCurrencyViewData(dummyListOfDataAfterChangeBy2))
+            testObserver.onChanged(CurrencyUiModel.SuccessCurrencyUiModel(dummyListOfDataAfterChangeBy2))
         }
     }
 
@@ -126,10 +128,10 @@ class CurrencyViewModelUnitTest {
         testCoroutineDispatcher.advanceTimeBy(2000)
 
         verifyOrder {
-            testObserver.onChanged(CurrencyViewData.LoadingCurrencyViewData)
-            testObserver.onChanged(CurrencyViewData.SuccessCurrencyViewData(dummyListOfCurrencyData))
-            testObserver.onChanged(CurrencyViewData.SuccessCurrencyViewData(dummyListOfCurrencyData))
-            testObserver.onChanged(CurrencyViewData.SuccessCurrencyViewData(dummyListOfCurrencyData))
+            testObserver.onChanged(CurrencyUiModel.LoadingCurrencyUiModel)
+            testObserver.onChanged(CurrencyUiModel.SuccessCurrencyUiModel(dummyListOfCurrencyData))
+            testObserver.onChanged(CurrencyUiModel.SuccessCurrencyUiModel(dummyListOfCurrencyData))
+            testObserver.onChanged(CurrencyUiModel.SuccessCurrencyUiModel(dummyListOfCurrencyData))
         }
     }
 
@@ -153,12 +155,12 @@ class CurrencyViewModelUnitTest {
         testCoroutineDispatcher.advanceTimeBy(2000)
 
         verifyOrder {
-            testObserver.onChanged(CurrencyViewData.LoadingCurrencyViewData)
-            testObserver.onChanged(CurrencyViewData.SuccessCurrencyViewData(dummyListOfCurrencyData.map { Currency(it.name, it.value) }))
-            testObserver.onChanged(CurrencyViewData.SuccessCurrencyViewData(dummyListAfterClickingINR.map { Currency(it.name, it.value) }))
-            testObserver.onChanged(CurrencyViewData.SuccessCurrencyViewData(dummyListAfterClickingINR.map { Currency(it.name, it.value) }))
-            testObserver.onChanged(CurrencyViewData.SuccessCurrencyViewData(dummyListAfterClickingINR.map { Currency(it.name, it.value) }))
-            testObserver.onChanged(CurrencyViewData.SuccessCurrencyViewData(dummyListAfterClickingINR.map { Currency(it.name, it.value) }))
+            testObserver.onChanged(CurrencyUiModel.LoadingCurrencyUiModel)
+            testObserver.onChanged(CurrencyUiModel.SuccessCurrencyUiModel(dummyListOfCurrencyData.map { Currency(it.name, it.value) }))
+            testObserver.onChanged(CurrencyUiModel.SuccessCurrencyUiModel(dummyListAfterClickingINR.map { Currency(it.name, it.value) }))
+            testObserver.onChanged(CurrencyUiModel.SuccessCurrencyUiModel(dummyListAfterClickingINR.map { Currency(it.name, it.value) }))
+            testObserver.onChanged(CurrencyUiModel.SuccessCurrencyUiModel(dummyListAfterClickingINR.map { Currency(it.name, it.value) }))
+            testObserver.onChanged(CurrencyUiModel.SuccessCurrencyUiModel(dummyListAfterClickingINR.map { Currency(it.name, it.value) }))
         }
     }
 

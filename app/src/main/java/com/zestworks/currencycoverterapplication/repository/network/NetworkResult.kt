@@ -1,4 +1,4 @@
-package com.zestworks.currencycoverterapplication.network
+package com.zestworks.currencycoverterapplication.repository.network
 
 sealed class NetworkResult<out T : Any> {
     data class Success<out T : Any>(val data: T) : NetworkResult<T>()
