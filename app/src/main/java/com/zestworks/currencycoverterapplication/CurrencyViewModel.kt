@@ -98,7 +98,7 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
 
                             if (base != null && value != null) {
                                 if (base == currencyList.first().name && value != currencyList.first().value) {
-                                    val updatedList = mutableListOf<Currency>().apply { addAll(currencyList.map { Currency(it.name, it.value * value) }) }
+                                    val updatedList = mutableListOf<Currency>().apply { addAll(currencyList.map { Currency(it.name, (it.value * value))}) }
                                     _rates.postValue(CurrencyViewData.SuccessCurrencyViewData(updatedList))
                                 } else {
                                     _rates.postValue(CurrencyViewData.SuccessCurrencyViewData(currencyList))
@@ -116,4 +116,7 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
             }
         }
     }
+
+
+
 }
