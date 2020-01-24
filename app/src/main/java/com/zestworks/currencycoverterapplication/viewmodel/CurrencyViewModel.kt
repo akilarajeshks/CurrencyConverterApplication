@@ -66,9 +66,11 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
                 while (true) {
                     var base: String? = null
                     var value: Double? = null
-                    if (_rates.value != null && _rates.value is CurrencyUiModel.SuccessCurrencyUiModel) {
-                        base = (_rates.value as CurrencyUiModel.SuccessCurrencyUiModel).currencyList.first().name
-                        value = (_rates.value as CurrencyUiModel.SuccessCurrencyUiModel).currencyList.first().value
+                    if (_rates.value != null) {
+                        if (_rates.value is CurrencyUiModel.SuccessCurrencyUiModel) {
+                            base = (_rates.value as CurrencyUiModel.SuccessCurrencyUiModel).currencyList.first().name
+                            value = (_rates.value as CurrencyUiModel.SuccessCurrencyUiModel).currencyList.first().value
+                        }
                     } else {
                         _rates.postValue(CurrencyUiModel.LoadingCurrencyUiModel)
                     }
@@ -108,7 +110,8 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
                             }
                         }
                         is NetworkResult.Error -> {
-                            _rates.postValue(CurrencyUiModel.ErrorCurrencyUiModel(reason = networkResponse.reason))
+                            if (_rates.value == null || _rates.value is CurrencyUiModel.LoadingCurrencyUiModel)
+                                _rates.postValue(CurrencyUiModel.ErrorCurrencyUiModel(reason = networkResponse.reason))
                         }
                     }
                     delay(1000)
@@ -116,6 +119,4 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
             }
         }
     }
-
-
 }

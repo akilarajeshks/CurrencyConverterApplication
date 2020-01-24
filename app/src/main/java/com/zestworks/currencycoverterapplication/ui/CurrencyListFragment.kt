@@ -36,7 +36,6 @@ class CurrencyListFragment : Fragment() {
                 }
 
                 is CurrencyUiModel.SuccessCurrencyUiModel -> {
-
                     if (currency_list_recycler.adapter == null) {
                         currency_list_recycler.apply {
                             adapter = CurrencyListAdapter(it.currencyList, object : AdapterCallback {
@@ -56,7 +55,6 @@ class CurrencyListFragment : Fragment() {
                 }
                 is CurrencyUiModel.ErrorCurrencyUiModel -> {
                     loading_progress_bar.visibility = View.INVISIBLE
-                    currency_list_recycler.visibility = View.GONE
                     error_text_view.visibility = View.VISIBLE
                 }
             }

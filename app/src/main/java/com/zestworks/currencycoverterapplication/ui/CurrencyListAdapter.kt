@@ -52,6 +52,8 @@ class CurrencyListAdapter(var currencyList: List<Currency>, private val adapterC
             }
         }
 
+        holder.currencyFullName.text = currencyFullNames[currency.name]
+
         Glide
                 .with(holder.itemView.context)
                 .load(countryFlagImages[currency.name])
@@ -63,12 +65,13 @@ class CurrencyListAdapter(var currencyList: List<Currency>, private val adapterC
     @SuppressLint("ClickableViewAccessibility")
     inner class CurrencyItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val currencyName: TextView = itemView.findViewById(R.id.curreny_name_textview)
+        val currencyFullName: TextView = itemView.findViewById(R.id.curreny_full_name_textview)
         val currencyValue: EditText = itemView.findViewById(R.id.currency_value_edittext)
         val currencyFlag: ImageView = itemView.findViewById(R.id.currency_image_view)
 
         init {
 
-            currencyValue.setOnTouchListener { v, event ->
+            currencyValue.setOnTouchListener { _, event ->
                 if (event.action == MotionEvent.ACTION_UP) {
                     adapterCallback.onUIEvent(UIEvent.StartEditUIEvent(this@CurrencyListAdapter.currencyList[adapterPosition].name))
                 }

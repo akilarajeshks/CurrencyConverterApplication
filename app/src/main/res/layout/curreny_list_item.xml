@@ -6,23 +6,37 @@
     android:layout_height="wrap_content">
 
     <ImageView
+        android:id="@+id/currency_image_view"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:layout_margin="30dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/currency_image_view"
-        android:layout_margin="30dp"
         tools:ignore="ContentDescription" />
+
     <TextView
         android:id="@+id/curreny_name_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
+        android:textColor="#000000"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toRightOf="@id/currency_image_view"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="EUR" />
+
+    <TextView
+        android:id="@+id/curreny_full_name_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="15sp"
+        android:textStyle="italic"
+        app:layout_constraintLeft_toRightOf="@id/currency_image_view"
+        app:layout_constraintTop_toBottomOf="@id/curreny_name_textview"
+        tools:text="EURO" />
 
     <EditText
         android:id="@+id/currency_value_edittext"
@@ -31,7 +45,10 @@
         android:layout_margin="30dp"
         android:autofillHints="000"
         android:inputType="numberDecimal"
+        android:nextFocusDown="@id/currency_value_edittext"
         android:textSize="20sp"
+        android:textStyle="bold"
+        app:backgroundTint="@android:color/darker_gray"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="LabelFor"
