@@ -110,8 +110,7 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
                             }
                         }
                         is NetworkResult.Error -> {
-                            if (_rates.value == null || _rates.value is CurrencyUiModel.LoadingCurrencyUiModel)
-                                _rates.postValue(CurrencyUiModel.ErrorCurrencyUiModel(reason = networkResponse.reason))
+                            _rates.postValue(CurrencyUiModel.ErrorCurrencyUiModel(reason = networkResponse.reason))
                         }
                     }
                     delay(1000)

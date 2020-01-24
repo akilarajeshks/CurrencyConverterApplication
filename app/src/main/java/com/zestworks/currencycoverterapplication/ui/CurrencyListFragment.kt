@@ -55,6 +55,7 @@ class CurrencyListFragment : Fragment() {
                 }
                 is CurrencyUiModel.ErrorCurrencyUiModel -> {
                     loading_progress_bar.visibility = View.INVISIBLE
+                    currency_list_recycler.visibility = View.INVISIBLE
                     error_text_view.visibility = View.VISIBLE
                 }
             }
