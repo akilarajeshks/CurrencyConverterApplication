@@ -77,7 +77,7 @@ class CurrencyListAdapter(var currencyList: List<Currency>, private val adapterC
 
             compositeDisposable.add(currencyValue.textChanges().skipInitialValue().subscribe {
                 if (currencyValue.isFocused) {
-                    if (it.toString().isEmpty()) {
+                    if (it.toString().isEmpty() || it.toString() == ".") {
                         adapterCallback.onUIEvent(UIEvent.TextChangeUIEvent(0.0))
                     } else {
                         adapterCallback.onUIEvent(UIEvent.TextChangeUIEvent(it.toString().toDouble()))

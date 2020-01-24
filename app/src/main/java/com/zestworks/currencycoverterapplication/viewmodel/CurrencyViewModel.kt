@@ -43,7 +43,10 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
                 val currentCurrencyValue = currencyList.first().value
                 val currentBase = currencyList.first().name
 
-                val diff = editedCurrencyValue / currentCurrencyValue
+                var diff = editedCurrencyValue / currentCurrencyValue
+                if (diff.isNaN() || diff.isInfinite()) {
+                    diff = 0.0
+                }
                 val updatedCurrencyList = mutableListOf<Currency>()
                 updatedCurrencyList.add(Currency(currentBase, editedCurrencyValue))
                 currencyList.forEach {
