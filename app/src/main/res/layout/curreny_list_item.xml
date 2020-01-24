@@ -5,6 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/currency_image_view"
+        android:layout_margin="30dp"
+        tools:ignore="ContentDescription" />
     <TextView
         android:id="@+id/curreny_name_textview"
         android:layout_width="wrap_content"
@@ -12,7 +20,7 @@
         android:layout_margin="30dp"
         android:textSize="25sp"
         android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/currency_image_view"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="EUR" />
 
@@ -22,7 +30,7 @@
         android:layout_height="50dp"
         android:layout_margin="30dp"
         android:autofillHints="000"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         android:textSize="20sp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"

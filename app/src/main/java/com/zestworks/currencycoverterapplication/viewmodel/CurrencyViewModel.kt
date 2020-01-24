@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zestworks.currencycoverterapplication.repository.network.NetworkResult
 import com.zestworks.currencycoverterapplication.repository.CurrencyData
 import com.zestworks.currencycoverterapplication.repository.Repository
+import com.zestworks.currencycoverterapplication.repository.network.NetworkResult
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -21,7 +21,7 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
     fun onEvent(event: UIEvent) {
         when (event) {
             is UIEvent.StartEditUIEvent -> {
-                    launch.cancel()
+                launch.cancel()
 
                 val baseCurrency = event.currencyName
                 val currencyList = (_rates.value as CurrencyUiModel.SuccessCurrencyUiModel).currencyList.toMutableList()
@@ -30,14 +30,14 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
                     if (currency != null) {
                         currencyList.remove(currency)
                         currencyList.add(0, currency)
-                        _rates.postValue(CurrencyUiModel.SuccessCurrencyUiModel(currencyList))
+                        _rates.value = (CurrencyUiModel.SuccessCurrencyUiModel(currencyList))
                     }
                 }
 
                 onUIStarted()
             }
             is UIEvent.TextChangeUIEvent -> {
-                    launch.cancel()
+                launch.cancel()
                 val editedCurrencyValue = event.value
                 val currencyList = (_rates.value as CurrencyUiModel.SuccessCurrencyUiModel).currencyList
                 val currentCurrencyValue = currencyList.first().value
@@ -51,7 +51,7 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
                         updatedCurrencyList.add(Currency(it.name, it.value * diff))
                     }
                 }
-                _rates.postValue(CurrencyUiModel.SuccessCurrencyUiModel(updatedCurrencyList))
+                _rates.value = (CurrencyUiModel.SuccessCurrencyUiModel(updatedCurrencyList))
                 onUIStarted()
             }
         }
@@ -113,7 +113,6 @@ class CurrencyViewModel(private val repository: Repository) : ViewModel() {
             }
         }
     }
-
 
 
 }

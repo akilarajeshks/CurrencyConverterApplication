@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.zestworks.currencycoverterapplication.viewmodel.CurrencyViewModel
 import com.zestworks.currencycoverterapplication.R
 import com.zestworks.currencycoverterapplication.viewmodel.CurrencyUiModel
+import com.zestworks.currencycoverterapplication.viewmodel.CurrencyViewModel
 import com.zestworks.currencycoverterapplication.viewmodel.UIEvent
 import kotlinx.android.synthetic.main.fragment_currency_list.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -63,6 +63,11 @@ class CurrencyListFragment : Fragment() {
         })
 
         currencyViewModel.onUIStarted()
+    }
+
+    override fun onPause() {
+        currency_list_recycler.adapter = null
+        super.onPause()
     }
 }
 
